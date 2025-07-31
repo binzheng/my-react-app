@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "typecheck": "react-router typegen && tsc",
-    "biome-check": "biome check src/*",
-    "biome-safe-fx": "biome check --fix src/*",
+    "biome-check": "biome check src",
+    "biome-safe-fix": "biome check --fix src",
     "preview": "vite preview"
   },
   "dependencies": {

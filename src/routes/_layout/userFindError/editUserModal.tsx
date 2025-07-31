@@ -11,7 +11,7 @@ import { type UserFormValues, userSchema } from "../../../schema/user.schema";
 export function EditUserModal({ userId, onClose }: { userId: number; onClose: () => void }) {
   const { data: user, error } = useQuery({
     queryKey: ["editFindUser", userId],
-    queryFn: async () => FindUserErrorApi(),
+    queryFn: async () => FindUserErrorApi({ userId: userId }),
   });
   const { setNotification } = useNotification();
 

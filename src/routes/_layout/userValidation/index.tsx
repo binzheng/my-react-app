@@ -5,12 +5,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { SearchUserApi } from "../../../api/user.api";
 import { EditUserModal } from "./editUserModal";
-export const Route = createFileRoute("/_layout/userDirty")({
-  component: UserDirty,
+export const Route = createFileRoute("/_layout/userValidation/")({
+  component: UserValidation,
 });
-function UserDirty() {
+function UserValidation() {
   const { data, isFetching } = useQuery({
-    queryKey: ["userDirty"],
+    queryKey: ["userValidation"],
     queryFn: async () => SearchUserApi(),
   });
   const [userId, setUserId] = useState<number>();
@@ -19,7 +19,7 @@ function UserDirty() {
       field: "editBtn",
       headerName: "Edit",
       width: 100,
-      renderCell: (param: { row: { id: any } }) => (
+      renderCell: (param: { row: { id: number } }) => (
         <Button variant="contained" size="small" onClick={() => setUserId(param.row.id)}>
           Edit
         </Button>

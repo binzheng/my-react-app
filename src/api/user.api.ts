@@ -20,6 +20,7 @@ export async function FindUserApi(query: queryProp): Promise<User> {
   return userList.filter((user: User) => user.id === query.userId)[0] || null;
 }
 export async function FindUserErrorApi(query: queryProp): Promise<User> {
+  console.log(query);
   await new Promise((resolve) => setTimeout(resolve, 1000));
   throw new Error("Simulate error fetching user data");
 }

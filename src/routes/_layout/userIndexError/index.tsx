@@ -2,24 +2,31 @@ import { Box, Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { SearchUserApi } from "../../../api/user.api";
+import { useEffect, useState } from "react";
+import { SearchUserErrorApi } from "../../../api/user.api";
+import { useNotification } from "../../../hook/useNotificationContext";
 import { EditUserModal } from "./editUserModal";
-export const Route = createFileRoute("/_layout/userValidation")({
-  component: UserValidation,
+export const Route = createFileRoute("/_layout/userIndexError/")({
+  component: UserIndexError,
 });
-function UserValidation() {
-  const { data, isFetching } = useQuery({
-    queryKey: ["userValidation"],
-    queryFn: async () => SearchUserApi(),
+function UserIndexError() {
+  const { data, isFetching, error } = useQuery({
+    queryKey: ["userIndexError"],
+    queryFn: async () => SearchUserErrorApi(),
   });
+  const { setNotification } = useNotification();
+  useEffect(() => {
+    if (error) {
+      setNotification({ type: "error", message: "User Index Error" });
+    }
+  }, [error, setNotification]);
   const [userId, setUserId] = useState<number>();
   const columns = [
     {
       field: "editBtn",
       headerName: "Edit",
       width: 100,
-      renderCell: (param: { row: { id: any } }) => (
+      renderCell: (param: { row: { id: number } }) => (
         <Button variant="contained" size="small" onClick={() => setUserId(param.row.id)}>
           Edit
         </Button>

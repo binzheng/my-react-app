@@ -16,7 +16,7 @@ function User() {
       field: "editBtn",
       headerName: "Edit",
       width: 100,
-      renderCell: (param: { row: { id: any } }) => (
+      renderCell: (param: { row: { id: number } }) => (
         <Link to="/user/$userId" params={{ userId: param.row.id }}>
           <Button variant="contained" size="small">
             Edit

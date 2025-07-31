@@ -6,12 +6,12 @@ import { useEffect, useState } from "react";
 import { SearchUserApi } from "../../../api/user.api";
 import { useNotification } from "../../../hook/useNotificationContext";
 import { EditUserModal } from "./editUserModal";
-export const Route = createFileRoute("/_layout/userSaveError")({
-  component: UserSaveError,
+export const Route = createFileRoute("/_layout/userFindError/")({
+  component: UserFindError,
 });
-function UserSaveError() {
+function UserFindError() {
   const { data, isFetching, error } = useQuery({
-    queryKey: ["userSaveError"],
+    queryKey: ["userFindError"],
     queryFn: async () => SearchUserApi(),
   });
   const { setNotification } = useNotification();
@@ -26,7 +26,7 @@ function UserSaveError() {
       field: "editBtn",
       headerName: "Edit",
       width: 100,
-      renderCell: (param: { row: { id: any } }) => (
+      renderCell: (param: { row: { id: number } }) => (
         <Button variant="contained" size="small" onClick={() => setUserId(param.row.id)}>
           Edit
         </Button>

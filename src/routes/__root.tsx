@@ -1,12 +1,19 @@
 import { Dashboard } from "@mui/icons-material";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import type { Navigation } from "@toolpad/core";
+import type { NavigationItem } from "@toolpad/core";
 import { TanStackRouterAppProvider } from "@toolpad/core/tanstack-router";
 import { GlobalLoading } from "../component/globalLoading";
 import { NotificationDialog } from "../component/notificationDialog";
+import { useAuthRole, useFilterNavigation } from "../hook/useAuthRole";
 import { NotificationProvider } from "../hook/useNotificationContext";
 
-const NAVIGATION: Navigation = [
+type NavigationItemWithRoles = NavigationItem & {
+  allowRoles?: ("admin" | "sales")[];
+};
+
+export type NavigationWithRoles = NavigationItemWithRoles[];
+
+export const NAVIGATION: NavigationWithRoles = [
   { segment: "", title: "Index", icon: <Dashboard /> },
   { segment: "home", title: "Home", icon: <Dashboard /> },
   {
@@ -18,16 +25,19 @@ const NAVIGATION: Navigation = [
     title: "User",
     icon: <Dashboard />,
     pattern: "user{/:userId}",
+    allowRoles: ["admin"],
   },
   {
     segment: "userModal",
     title: "UserModal",
     icon: <Dashboard />,
+    allowRoles: ["sales"],
   },
   {
     segment: "userValidation",
     title: "UserValidation",
     icon: <Dashboard />,
+    allowRoles: ["sales", "admin"],
   },
   {
     segment: "userDirty",
@@ -59,8 +69,9 @@ const BRANDING = {
   logo: <img src="/vite.svg" alt="Logo" style={{ width: 24, height: 24 }} />,
 };
 function App() {
+  const filterNavigation = useFilterNavigation();
   return (
-    <TanStackRouterAppProvider navigation={NAVIGATION} branding={BRANDING}>
+    <TanStackRouterAppProvider navigation={filterNavigation} branding={BRANDING}>
       <GlobalLoading />
       <NotificationProvider>
         <NotificationDialog />

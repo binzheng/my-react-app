@@ -1,11 +1,12 @@
 import { Dashboard } from "@mui/icons-material";
-import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import type { NavigationItem } from "@toolpad/core";
 import { TanStackRouterAppProvider } from "@toolpad/core/tanstack-router";
 import { GlobalLoading } from "../component/globalLoading";
 import { NotificationDialog } from "../component/notificationDialog";
-import { useAuthRole, useFilterNavigation } from "../hook/useAuthRole";
+import { type AuthContextType, useAuth } from "../hook/useAuth";
 import { NotificationProvider } from "../hook/useNotificationContext";
+import { filterNavigation } from "../utils/isAuthRole";
 
 type NavigationItemWithRoles = NavigationItem & {
   allowRoles?: ("admin" | "sales")[];
@@ -23,6 +24,20 @@ export const NAVIGATION: NavigationWithRoles = [
   {
     segment: "user",
     title: "User",
+    icon: <Dashboard />,
+    pattern: "user{/:userId}",
+    allowRoles: ["admin"],
+  },
+  {
+    segment: "userLoader",
+    title: "UserLoader",
+    icon: <Dashboard />,
+    pattern: "user{/:userId}",
+    allowRoles: ["admin"],
+  },
+  {
+    segment: "userRoute",
+    title: "UserRoute",
     icon: <Dashboard />,
     pattern: "user{/:userId}",
     allowRoles: ["admin"],
@@ -69,9 +84,10 @@ const BRANDING = {
   logo: <img src="/vite.svg" alt="Logo" style={{ width: 24, height: 24 }} />,
 };
 function App() {
-  const filterNavigation = useFilterNavigation();
+  const { authUser } = useAuth();
+  const navigation = filterNavigation(authUser?.roleId);
   return (
-    <TanStackRouterAppProvider navigation={filterNavigation} branding={BRANDING}>
+    <TanStackRouterAppProvider navigation={navigation} branding={BRANDING}>
       <GlobalLoading />
       <NotificationProvider>
         <NotificationDialog />
@@ -80,5 +96,8 @@ function App() {
     </TanStackRouterAppProvider>
   );
 }
+interface MyRouterContext {
+  auth: AuthContextType;
+}
 
-export const Route = createRootRoute({ component: App });
+export const Route = createRootRouteWithContext<MyRouterContext>()({ component: App });

@@ -1,30 +1,31 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import { SearchUserApi } from "../../../api/user.api";
-import { useAuth } from "../../../hook/useAuth";
-export const Route = createFileRoute("/_layout/user")({
-  component: User,
+import { EditUserModal } from "./editUserModal";
+export const Route = createFileRoute("/_layout/userLoader")({
+  loader: async () => {
+    return await SearchUserApi();
+  },
+  gcTime: 0,
+  staleTime: 0,
+  component: UserLoader,
 });
-function User() {
-  const { data, isFetching } = useQuery({
-    queryKey: ["user"],
-    queryFn: async () => SearchUserApi(),
-  });
-  const { authUser } = useAuth();
-  console.log("authUser:", authUser);
+function UserLoader() {
+  const data = Route.useLoaderData();
+  console.log("User Loader", data);
+  const navigation = useNavigate();
+  const [userId, setUserId] = useState<number>();
   const columns = [
     {
       field: "editBtn",
       headerName: "Edit",
       width: 100,
       renderCell: (param: { row: { id: number } }) => (
-        <Link to="/user/$userId" params={{ userId: param.row.id }}>
-          <Button variant="contained" size="small">
-            Edit
-          </Button>
-        </Link>
+        <Button variant="contained" size="small" onClick={() => setUserId(param.row.id)}>
+          Edit
+        </Button>
       ),
     },
     { field: "id", headerName: "UserId", width: 80 },
@@ -36,14 +37,15 @@ function User() {
   ];
   return (
     <>
-      <Outlet></Outlet>
+      {userId && <EditUserModal userId={userId} onClose={() => setUserId(undefined)} />}
       <Box>
+        <TextField label="Key"></TextField>
+        <Button onClick={() => navigation({ to: "/userLoader" })}>Search</Button>
         <DataGrid
           rows={data}
           columns={columns}
           getRowId={(row) => row.id}
           initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
-          loading={isFetching}
           disableRowSelectionOnClick
         ></DataGrid>
       </Box>

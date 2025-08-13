@@ -1,8 +1,9 @@
 import { Lock, Person, Visibility, VisibilityOff } from "@mui/icons-material";
 import { Button, InputAdornment, Link } from "@mui/material";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { AppProvider, SignInPage } from "@toolpad/core";
 import { useState } from "react";
+import { useAuth } from "../hook/useAuth";
 
 export const Route = createFileRoute("/login")({
   component: RouteComponent,
@@ -10,6 +11,9 @@ export const Route = createFileRoute("/login")({
 
 const providers = [{ id: "credentials", name: "xxx" }];
 function RouteComponent() {
+  const { setAuthUser } = useAuth();
+  const router = useRouter();
+  const navigation = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   return (
     <AppProvider>
@@ -60,8 +64,23 @@ function RouteComponent() {
               },
             },
           },
-          form: { noValidate: true },
-          submitButton: { variant: "contained", color: "primary" },
+          form: {
+            noValidate: true,
+            // onSubmit: () => {
+            //   console.log("onSubmit:");
+            //   setAuthUser({ userId: "100", roleId: "admin" });
+            // },
+          },
+          submitButton: {
+            variant: "contained",
+            color: "primary",
+            onClick: async () => {
+              console.log("onSubmit:");
+              setAuthUser({ userId: "100", roleId: "admin" });
+              await router.invalidate();
+              navigation({ to: "/userModal" });
+            },
+          },
         }}
       />
     </AppProvider>

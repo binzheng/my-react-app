@@ -7,7 +7,7 @@ type queryProp = {
 
 export async function SearchUserApi(): Promise<User[]> {
   console.log("SearchUserApi");
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 10000));
   return userList;
 }
 export async function SearchUserErrorApi(): Promise<User[]> {

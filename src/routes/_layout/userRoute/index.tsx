@@ -3,24 +3,21 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { SearchUserApi } from "../../../api/user.api";
-import { useAuth } from "../../../hook/useAuth";
-export const Route = createFileRoute("/_layout/user")({
-  component: User,
+export const Route = createFileRoute("/_layout/userRoute/")({
+  component: UserIndex,
 });
-function User() {
+function UserIndex() {
   const { data, isFetching } = useQuery({
     queryKey: ["user"],
     queryFn: async () => SearchUserApi(),
   });
-  const { authUser } = useAuth();
-  console.log("authUser:", authUser);
   const columns = [
     {
       field: "editBtn",
       headerName: "Edit",
       width: 100,
       renderCell: (param: { row: { id: number } }) => (
-        <Link to="/user/$userId" params={{ userId: param.row.id }}>
+        <Link to="/userRoute/$userId" params={{ userId: param.row.id }}>
           <Button variant="contained" size="small">
             Edit
           </Button>
@@ -36,7 +33,6 @@ function User() {
   ];
   return (
     <>
-      <Outlet></Outlet>
       <Box>
         <DataGrid
           rows={data}
